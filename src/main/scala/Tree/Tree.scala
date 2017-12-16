@@ -40,9 +40,7 @@ class Node[X, A <: Instance[X]](var left: Tree[X, A],
   }
 }
 
-class Leaf[X, A <: Instance[X]](left: Tree[X, A],
-                                   right: Tree[X, A],
-                                   minSplit: Int) extends Tree(left, right) {
+class Leaf[X, A <: Instance[X]](minSplit: Int) extends Tree[X, A](null, null) {
 
   val model = new ArrayBuffer[A]()
   val prediction = new mutable.HashMap[String, Int]()
@@ -65,8 +63,8 @@ class Leaf[X, A <: Instance[X]](left: Tree[X, A],
     else {
       val newRule: X => Boolean = createRule()
       val newNode = new Node(
-        new Leaf[X, A](null, null, minSplit=minSplit),
-        new Leaf[X, A](null, null, minSplit=minSplit),
+        new Leaf[X, A](minSplit),
+        new Leaf[X, A](minSplit),
         newRule)
       for(instance <- model){
         newNode.insert(instance)
