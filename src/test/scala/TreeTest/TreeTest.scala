@@ -12,15 +12,15 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     val minSplit = 10
 
 
-    val testTree = new Node[Dummy, TestType](
-      new Node[Dummy, TestType](
-        new Leaf[Dummy, TestType](minSplit),
-        new Leaf[Dummy, TestType](minSplit),
+    val testTree = new Node(
+      new Node(
+        new Leaf(minSplit),
+        new Leaf(minSplit),
         {_ => true}
       ),
-      new Node[Dummy, TestType](
-        new Leaf[Dummy, TestType](minSplit),
-        new Leaf[Dummy, TestType](minSplit),
+      new Node(
+        new Leaf(minSplit),
+        new Leaf(minSplit),
         {_ =>  true}
       ),
       {_ => true}
@@ -48,7 +48,7 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
   "Split operation" should "work" in {
     val minSplit = 3
 
-    val testTree = new Leaf[Dummy, TestType](minSplit)
+    val testTree = new Leaf(minSplit)
 
     val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
     val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
@@ -60,14 +60,14 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     testTree.insert(dummyInstance2)
 
     val splitTree1 = testTree.split()
-    splitTree1.isInstanceOf[Leaf[Dummy, TestType]] shouldBe true
+    splitTree1.isInstanceOf[Leaf] shouldBe true
 
     testTree.insert(dummyInstance3)
     testTree.insert(dummyInstance4)
     testTree.insert(dummyInstance5)
 
     val splitTree2 = testTree.split()
-    splitTree2.isInstanceOf[Node[Dummy, TestType]] shouldBe true
+    splitTree2.isInstanceOf[Node] shouldBe true
   }
 
 }

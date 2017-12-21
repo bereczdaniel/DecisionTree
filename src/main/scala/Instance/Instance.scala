@@ -1,6 +1,10 @@
 package Instance
 
-abstract class Instance[X](attributes: X, label: String) {
+abstract class Instance(attributes: Features, label: String) {
   def getLabel: String = label
-  def getAttributes: X = attributes
+  def getFeatures: Features = attributes
+}
+
+abstract class Features(){
+  def getValues: Array[Any]
 }

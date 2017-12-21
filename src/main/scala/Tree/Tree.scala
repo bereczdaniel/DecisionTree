@@ -1,21 +1,21 @@
 package Tree
 
-import Instance.Instance
+import Instance.{Features, Instance}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-abstract class Tree[X, A <: Instance[X]](left: Tree[X, A], right: Tree[X, A]) {
-  def predict(instance: X): String
-  def insert(instance: A): Unit
-  def split(): Tree[X, A]
+abstract class Tree(left: Tree, right: Tree) {
+  def predict(instance: Features): String
+  def insert(instance: Instance): Unit
+  def split(): Tree
 
 }
 
-class Node[X, A <: Instance[X]](var left: Tree[X, A],
-                                      var right: Tree[X, A],
-                                      rule: X => Boolean) extends Tree(left, right){
-  override def predict(instance: X): String = {
+class Node(var left: Tree,
+              var right: Tree,
+              rule: Features => Boolean) extends Tree(left, right){
+  override def predict(instance: Features): String = {
     if(rule(instance)){
       left.predict(instance)
     }
@@ -24,8 +24,8 @@ class Node[X, A <: Instance[X]](var left: Tree[X, A],
     }
   }
 
-  override def insert(instance: A): Unit = {
-    if(rule(instance.getAttributes)){
+  override def insert(instance: Instance): Unit = {
+    if(rule(instance.getFeatures)){
       left.insert(instance)
     }
     else {
@@ -33,38 +33,38 @@ class Node[X, A <: Instance[X]](var left: Tree[X, A],
     }
   }
 
-  override def split(): Tree[X, A] = {
+  override def split(): Tree = {
     left = left.split()
     right = right.split()
     this
   }
 }
 
-class Leaf[X, A <: Instance[X]](minSplit: Int) extends Tree[X, A](null, null) {
+class Leaf(minSplit: Int) extends Tree(null, null) {
 
-  val leafInstances = new ArrayBuffer[A]()
+  val leafInstances = new ArrayBuffer[Instance]()
   val state = new mutable.HashMap[String, Int]()
 
-  override def predict(instance: X): String = {
+  override def predict(instance: Features): String = {
     state.maxBy(_._2)._1
   }
 
-  override def insert(instance: A): Unit = {
+  override def insert(instance: Instance): Unit = {
     leafInstances += instance
     state.update(instance.getLabel, state.getOrElse(instance.getLabel, 0) + 1)
   }
 
-  def createRule(): X => Boolean = {_ => true}
+  def createRule(): Features => Boolean = {_ => true}
 
-  override def split(): Tree[X, A] = {
-    if(minSplit > leafInstances.size){
+  override def split(): Tree = {
+    if(minSplit > leafInstances.size || state.size == 1){
       this
     }
     else {
-      val newRule: X => Boolean = createRule()
+      val newRule: Features => Boolean = createRule()
       val newNode = new Node(
-        new Leaf[X, A](minSplit),
-        new Leaf[X, A](minSplit),
+        new Leaf(minSplit),
+        new Leaf(minSplit),
         newRule)
       for(instance <- leafInstances){
         newNode.insert(instance)
