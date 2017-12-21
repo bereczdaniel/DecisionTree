@@ -42,22 +42,22 @@ class Node[X, A <: Instance[X]](var left: Tree[X, A],
 
 class Leaf[X, A <: Instance[X]](minSplit: Int) extends Tree[X, A](null, null) {
 
-  val model = new ArrayBuffer[A]()
-  val prediction = new mutable.HashMap[String, Int]()
+  val leafInstances = new ArrayBuffer[A]()
+  val state = new mutable.HashMap[String, Int]()
 
   override def predict(instance: X): String = {
-    prediction.maxBy(_._2)._1
+    state.maxBy(_._2)._1
   }
 
   override def insert(instance: A): Unit = {
-    model += instance
-    prediction.update(instance.getLabel, prediction.getOrElse(instance.getLabel, 0) + 1)
+    leafInstances += instance
+    state.update(instance.getLabel, state.getOrElse(instance.getLabel, 0) + 1)
   }
 
   def createRule(): X => Boolean = {_ => true}
 
   override def split(): Tree[X, A] = {
-    if(minSplit > model.size){
+    if(minSplit > leafInstances.size){
       this
     }
     else {
@@ -66,7 +66,7 @@ class Leaf[X, A <: Instance[X]](minSplit: Int) extends Tree[X, A](null, null) {
         new Leaf[X, A](minSplit),
         new Leaf[X, A](minSplit),
         newRule)
-      for(instance <- model){
+      for(instance <- leafInstances){
         newNode.insert(instance)
       }
       newNode
