@@ -5,7 +5,7 @@ import Purity.Measures.Gini
 
 object Utils {
 
-  def bestSplit[T: Ordering](instances: Array[(T, String)]): T = {
+  def bestSplit[T: Ordering](instances: Array[(T, String)]): (T, Double) = {
 
     var bestBoundary = instances.head._1
     var bestGini = 1.0
@@ -21,7 +21,7 @@ object Utils {
         bestGini = comboGini
       }
     }
-    bestBoundary
+    (bestBoundary, bestGini)
   }
 
   def createState[T: Ordering]( instances: Array[(T, String)],
@@ -30,5 +30,6 @@ object Utils {
     ( instances.filter(_._1 >= boundary).groupBy(_._2).map(x => (x._1, x._2.length)),
       instances.filterNot(_._1 >= boundary).groupBy(_._2).map(x => (x._1, x._2.length)))
   }
+
 
 }

@@ -70,4 +70,28 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     splitTree2.isInstanceOf[Node] shouldBe true
   }
 
+  "New rules" should "be created" in {
+    val minSplit = 3
+
+    val testTree = new Leaf(minSplit)
+
+    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
+    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
+    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
+    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
+    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
+    val dummyInstance6 = new TestType(Dummy(2, 1.25), "A")
+
+    testTree.insert(dummyInstance1)
+    testTree.insert(dummyInstance2)
+    testTree.insert(dummyInstance3)
+    testTree.insert(dummyInstance4)
+    testTree.insert(dummyInstance5)
+    testTree.insert(dummyInstance6)
+
+    val splitTree = testTree.split()
+    println("asd")
+
+  }
+
 }

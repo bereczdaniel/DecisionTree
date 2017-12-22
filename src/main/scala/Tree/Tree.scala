@@ -1,6 +1,7 @@
 package Tree
 
 import Instance.{Features, Instance}
+import Utils.Utils.bestSplit
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -13,8 +14,8 @@ abstract class Tree(left: Tree, right: Tree) {
 }
 
 class Node(var left: Tree,
-              var right: Tree,
-              rule: Features => Boolean) extends Tree(left, right){
+           var right: Tree,
+           rule: Features => Boolean) extends Tree(left, right){
   override def predict(instance: Features): String = {
     if(rule(instance)){
       left.predict(instance)
@@ -54,7 +55,17 @@ class Leaf(minSplit: Int) extends Tree(null, null) {
     state.update(instance.getLabel, state.getOrElse(instance.getLabel, 0) + 1)
   }
 
-  def createRule(): Features => Boolean = {_ => true}
+  def createRule(): Features => Boolean = {
+    val a = leafInstances.map(_.getFeatures.getValues)
+    val b = (for(i <- a.head.indices)
+      yield (for(j <- a.indices)
+        yield a(j)(i)).toArray.zip(leafInstances.map(_.getLabel)))
+      .toArray
+
+    val boundaries = (for(i <- b.indices) yield (bestSplit(b(i)), i)).toArray.maxBy(_._1._2)
+
+    {f => f.getValues(boundaries._2) >= boundaries._1._1}
+  }
 
   override def split(): Tree = {
     if(minSplit > leafInstances.size || state.size == 1){

@@ -6,5 +6,5 @@ abstract class Instance(attributes: Features, label: String) {
 }
 
 abstract class Features(){
-  def getValues: Array[Any]
+  def getValues: Array[Double]
 }
