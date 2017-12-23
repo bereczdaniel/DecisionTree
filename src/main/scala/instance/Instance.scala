@@ -1,4 +1,4 @@
-package Instance
+package instance
 
 abstract class Instance(attributes: Features, label: String) {
   def getLabel: String = label

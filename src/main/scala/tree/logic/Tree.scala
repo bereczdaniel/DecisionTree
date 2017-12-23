@@ -1,7 +1,7 @@
-package Tree
+package tree.logic
 
-import Instance.{Features, Instance}
-import Utils.Utils.bestSplit
+import utils.Utils.bestSplit
+import instance.{Features, Instance}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

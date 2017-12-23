@@ -1,9 +1,8 @@
-package TreeTest
+package tree.logic
 
-import Tree.{Leaf, Node}
-import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.prop.PropertyChecks
-import utils._
+import org.scalatest.{FlatSpec, Matchers}
+import test.utils.{Dummy, TestType}
 
 class TreeTest extends FlatSpec with PropertyChecks with Matchers {
 

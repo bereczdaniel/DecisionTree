@@ -1,6 +1,6 @@
-package utils
+package test.utils
 
-import Instance.{Features, Instance}
+import instance.{Features, Instance}
 
 object Utils {
 

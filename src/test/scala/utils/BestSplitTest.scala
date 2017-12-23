@@ -1,7 +1,7 @@
-package UtilsTest
+package utils
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.prop.PropertyChecks
+import org.scalatest.{FlatSpec, Matchers}
 
 class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
 
@@ -15,7 +15,7 @@ class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
       (6.1, "B"),
       (7.9, "B"))
 
-    Utils.Utils.bestSplit(instances) shouldBe 5.0
+    utils.Utils.bestSplit(instances) shouldBe 5.0
   }
 
   "BS" should "give the best possible split" in {
@@ -29,7 +29,7 @@ class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
       (7.7, "B"),
       (8.8, "A"))
 
-    Utils.Utils.bestSplit(instances) shouldBe 5.0
+    utils.Utils.bestSplit(instances) shouldBe 5.0
   }
 
 
@@ -44,7 +44,7 @@ class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
       (7, "B"),
       (8, "A"))
 
-    Utils.Utils.bestSplit(instances) shouldBe 5.0
+    utils.Utils.bestSplit(instances) shouldBe 5.0
   }
 
 

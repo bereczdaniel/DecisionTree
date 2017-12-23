@@ -1,6 +1,4 @@
-package Utils
-
-import Purity.Measures.Gini
+package utils
 
 
 object Utils {
@@ -12,8 +10,8 @@ object Utils {
 
     for(instance <- instances){
       val (leftLeaf, rightLeaf) = createState(instances, instance._1)
-      val leftGini = Gini.gini(leftLeaf)
-      val rightGini = Gini.gini(rightLeaf)
+      val leftGini = Measures.gini(leftLeaf)
+      val rightGini = Measures.gini(rightLeaf)
 
       val comboGini = (leftGini + rightGini) / 2
       if(comboGini <= bestGini){
