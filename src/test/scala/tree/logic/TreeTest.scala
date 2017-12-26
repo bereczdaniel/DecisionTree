@@ -120,4 +120,31 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     secondSplit.countLeafs() shouldBe 2
   }
 
+  "Gini" should "give the gini index in the given leaf" in {
+    val minSplit = 3
+
+    val testTree = Leaf(minSplit)
+
+    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
+    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
+    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
+    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
+    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
+    val dummyInstance6 = new TestType(Dummy(2, 1.25), "A")
+
+    testTree.insert(dummyInstance1)
+    testTree.insert(dummyInstance2)
+    testTree.insert(dummyInstance3)
+    testTree.insert(dummyInstance4)
+    testTree.insert(dummyInstance5)
+    testTree.insert(dummyInstance6)
+
+    testTree.gini shouldBe 0.5
+
+    val splitTree = testTree.split()
+
+    splitTree.asInstanceOf[Node].right.asInstanceOf[Leaf].gini shouldBe 0.0
+    splitTree.asInstanceOf[Node].left.asInstanceOf[Leaf].gini shouldBe 0.0
+  }
+
 }
