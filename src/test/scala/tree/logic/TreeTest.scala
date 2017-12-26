@@ -87,10 +87,37 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     testTree.insert(dummyInstance4)
     testTree.insert(dummyInstance5)
     testTree.insert(dummyInstance6)
+    //TODO figure out how to test
+  }
 
-    val splitTree = testTree.split()
-    println("asd")
+  "CountLeafs" should "give the number of leafs" in {
+    val minSplit = 3
 
+    val testTree = Leaf(minSplit)
+
+    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
+    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
+    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
+    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
+    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
+    val dummyInstance6 = new TestType(Dummy(2, 1.25), "A")
+
+    testTree.insert(dummyInstance1)
+    testTree.insert(dummyInstance2)
+    testTree.insert(dummyInstance3)
+    testTree.insert(dummyInstance4)
+    testTree.insert(dummyInstance5)
+    testTree.insert(dummyInstance6)
+
+    testTree.countLeafs() shouldBe 1
+
+    val firstSplit = testTree.split()
+
+    firstSplit.countLeafs() shouldBe 2
+
+    val secondSplit = firstSplit.split()
+
+    secondSplit.countLeafs() shouldBe 2
   }
 
 }

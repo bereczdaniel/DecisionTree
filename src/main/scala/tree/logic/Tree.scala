@@ -2,6 +2,7 @@ package tree.logic
 
 import utils.Utils.bestSplit
 import instance.{Features, Instance}
+import utils.Measures
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -10,6 +11,7 @@ sealed abstract class Tree(left: Tree, right: Tree) {
   def predict(instance: Features): String
   def insert(instance: Instance): Unit
   def split(): Tree
+  def countLeafs(): Int
 
 }
 
@@ -37,12 +39,16 @@ case class Node(left: Tree,
   override def split(): Tree = {
     Node(left.split(), right.split(), rule)
   }
+
+  override def countLeafs(): Int =
+    left.countLeafs() + right.countLeafs()
 }
 
 case class Leaf(minSplit: Int) extends Tree(null, null) {
 
   val leafInstances = new ArrayBuffer[Instance]()
   val state = new mutable.HashMap[String, Int]()
+  def gini: Double = Measures.gini(state)
 
   override def predict(instance: Features): String = {
     state.maxBy(_._2)._1
@@ -81,6 +87,6 @@ case class Leaf(minSplit: Int) extends Tree(null, null) {
       newNode
     }
   }
-  
-  
+
+  override def countLeafs(): Int = 1
 }
