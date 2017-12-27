@@ -15,8 +15,8 @@ sealed abstract class Tree(left: Tree, right: Tree) {
 
 }
 
-case class Node(left: Tree,
-                right: Tree,
+case class Node(var left: Tree,
+                var right: Tree,
                 rule: Features => Boolean) extends Tree(left, right){
   override def predict(instance: Features): String = {
     if(rule(instance)){
@@ -37,7 +37,9 @@ case class Node(left: Tree,
   }
 
   override def split(): Tree = {
-    Node(left.split(), right.split(), rule)
+    left = left.split()
+    right = right.split()
+    this
   }
 
   override def countLeafs(): Int =

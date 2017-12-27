@@ -3,24 +3,24 @@ package tree.classifier
 import instance.Instance
 import tree.logic.{Leaf, Tree}
 
-class TreeClassifier(minSplit: Int, minImpurity: Double, maxDepth: Int) {
+class TreeClassifier(maxLeafSize: Int = 1, maxImpurity: Double = 0.0, maxDepth: Int = Int.MaxValue) {
 
   def train[A <: Instance](data: Array[A]): Tree = {
-    val base = Leaf(minSplit, minImpurity)
+    val base = Leaf(maxLeafSize, maxImpurity)
 
     for(instance <- data){
       base.insert(instance)
     }
 
-    trainInner(1, base)
+    trainInner(1, base, 0)
   }
 
-  def trainInner(depth: Int, currentTree: Tree): Tree = {
-    if(depth == maxDepth){
+  def trainInner(depth: Int, currentTree: Tree, prevLeafNumber: Int): Tree = {
+    if(depth == maxDepth || currentTree.countLeafs() == prevLeafNumber){
       currentTree
     }
     else {
-      trainInner(depth + 1, currentTree.split())
+      trainInner(depth + 1, currentTree.split(), currentTree.countLeafs())
     }
   }
 }
