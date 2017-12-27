@@ -8,18 +8,19 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
 
 
   "Tree operation" should "work" in {
-    val minSplit = 10
+    val maxLeafSize = 10
+    val maxImpurity = 0.0
 
 
     val testTree = Node(
       Node(
-        Leaf(minSplit),
-        Leaf(minSplit),
+        Leaf(maxLeafSize, maxImpurity),
+        Leaf(maxLeafSize, maxImpurity),
         { _ => true }
       ),
       Node(
-        Leaf(minSplit),
-        Leaf(minSplit),
+        Leaf(maxLeafSize, maxImpurity),
+        Leaf(maxLeafSize, maxImpurity),
         { _ => true }
       ),
       { _ => true }
@@ -45,9 +46,10 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
   }
 
   "Split operation" should "work" in {
-    val minSplit = 3
+    val maxLeafSize = 3
+    val maxImpurity = 0.0
 
-    val testTree = Leaf(minSplit)
+    val testTree = Leaf(maxLeafSize, maxImpurity)
 
     val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
     val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
@@ -67,12 +69,27 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
 
     val splitTree2 = testTree.split()
     splitTree2.isInstanceOf[Node] shouldBe true
+
+    val impurityTree = Leaf(10, 0.001)
+
+    impurityTree.insert(dummyInstance1)
+    impurityTree.insert(dummyInstance2)
+
+    val impurityTreeSplit = impurityTree.split()
+    impurityTreeSplit.isInstanceOf[Leaf] shouldBe true
+
+    impurityTree.insert(dummyInstance3)
+    impurityTree.insert(dummyInstance4)
+
+    val impurityTreeSplit2 = impurityTree.split()
+    impurityTreeSplit2.isInstanceOf[Node] shouldBe true
   }
 
   "New rules" should "be created" in {
-    val minSplit = 3
+    val maxLeafSize = 3
+    val maxImpurity = 0.0
 
-    val testTree = Leaf(minSplit)
+    val testTree = Leaf(maxLeafSize, maxImpurity)
 
     val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
     val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
@@ -91,9 +108,10 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
   }
 
   "CountLeafs" should "give the number of leafs" in {
-    val minSplit = 3
+    val maxLeafSize = 3
+    val maxImpurity = 0.0
 
-    val testTree = Leaf(minSplit)
+    val testTree = Leaf(maxLeafSize, maxImpurity)
 
     val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
     val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
@@ -121,9 +139,10 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
   }
 
   "Gini" should "give the gini index in the given leaf" in {
-    val minSplit = 3
+    val maxLeafSize = 3
+    val maxImpurity = 0.0
 
-    val testTree = Leaf(minSplit)
+    val testTree = Leaf(maxLeafSize, maxImpurity)
 
     val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
     val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
@@ -146,5 +165,4 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     splitTree.asInstanceOf[Node].right.asInstanceOf[Leaf].gini shouldBe 0.0
     splitTree.asInstanceOf[Node].left.asInstanceOf[Leaf].gini shouldBe 0.0
   }
-
 }

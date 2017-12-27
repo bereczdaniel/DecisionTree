@@ -1,12 +1,12 @@
 package tree.classifier
 
 import instance.Instance
-import tree.logic.{Leaf, Node, Tree}
+import tree.logic.{Leaf, Tree}
 
-class TreeClassifier(minSplit: Int, maxDepth: Int) {
+class TreeClassifier(minSplit: Int, minImpurity: Double, maxDepth: Int) {
 
   def train[A <: Instance](data: Array[A]): Tree = {
-    val base = Leaf(minSplit)
+    val base = Leaf(minSplit, minImpurity)
 
     for(instance <- data){
       base.insert(instance)

@@ -44,7 +44,8 @@ case class Node(left: Tree,
     left.countLeafs() + right.countLeafs()
 }
 
-case class Leaf(minSplit: Int) extends Tree(null, null) {
+
+case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) {
 
   val leafInstances = new ArrayBuffer[Instance]()
   val state = new mutable.HashMap[String, Int]()
@@ -72,19 +73,20 @@ case class Leaf(minSplit: Int) extends Tree(null, null) {
   }
 
   override def split(): Tree = {
-    if(minSplit > leafInstances.size || state.size == 1){
-      this
-    }
-    else {
+
+    if((maxImpurity < gini || maxLeafSize < leafInstances.size) && state.size > 1){
       val newRule: Features => Boolean = createRule()
       val newNode = Node(
-        Leaf(minSplit),
-        Leaf(minSplit),
+        Leaf(maxLeafSize, maxImpurity),
+        Leaf(maxLeafSize, maxImpurity),
         newRule)
       for(instance <- leafInstances){
         newNode.insert(instance)
       }
       newNode
+    }
+    else {
+      this
     }
   }
 
