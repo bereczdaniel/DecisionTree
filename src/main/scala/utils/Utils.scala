@@ -13,7 +13,7 @@ object Utils {
       val leftGini = Measures.gini(leftLeaf)
       val rightGini = Measures.gini(rightLeaf)
 
-      val comboGini = (leftGini + rightGini) / 2
+      val comboGini = (leftGini * leftLeaf.values.sum + rightGini * rightLeaf.values.sum) / instances.length
       if(comboGini <= bestGini){
         bestBoundary = instance._1
         bestGini = comboGini

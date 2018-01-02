@@ -15,7 +15,7 @@ class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
       (6.1, "B"),
       (7.9, "B"))
 
-    utils.Utils.bestSplit(instances) shouldBe 5.0
+    utils.Utils.bestSplit(instances)._1 shouldBe 5.2
   }
 
   "BS" should "give the best possible split" in {
@@ -29,7 +29,7 @@ class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
       (7.7, "B"),
       (8.8, "A"))
 
-    utils.Utils.bestSplit(instances) shouldBe 5.0
+    utils.Utils.bestSplit(instances)._1 shouldBe 5.5
   }
 
 
@@ -44,7 +44,7 @@ class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
       (7, "B"),
       (8, "A"))
 
-    utils.Utils.bestSplit(instances) shouldBe 5.0
+    utils.Utils.bestSplit(instances)._1 shouldBe 5.0
   }
 
 
