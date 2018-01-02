@@ -12,7 +12,6 @@ sealed abstract class Tree(left: Tree, right: Tree) {
   def insert(instance: Instance): Unit
   def split(): Tree
   def countLeafs(): Int
-
 }
 
 case class Node(var left: Tree,
@@ -44,6 +43,7 @@ case class Node(var left: Tree,
 
   override def countLeafs(): Int =
     left.countLeafs() + right.countLeafs()
+
 }
 
 
@@ -51,7 +51,7 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
 
   val leafInstances = new ArrayBuffer[Instance]()
   val state = new mutable.HashMap[String, Int]()
-  def gini: Double = Measures.gini(state)
+  def gini(): Double = Measures.gini(state)
 
   override def predict(instance: Features): String = {
     state.maxBy(_._2)._1
