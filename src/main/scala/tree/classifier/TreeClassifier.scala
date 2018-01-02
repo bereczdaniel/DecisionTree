@@ -16,11 +16,13 @@ class TreeClassifier(maxLeafSize: Int = 1, maxImpurity: Double = 0.0, maxDepth: 
   }
 
   def trainInner(depth: Int, currentTree: Tree, prevLeafNumber: Int): Tree = {
-    if(depth == maxDepth || currentTree.countLeafs() == prevLeafNumber){
+    val currentLeafs = currentTree.countLeafs()
+
+    if(depth == maxDepth || currentLeafs == prevLeafNumber){
       currentTree
     }
     else {
-      trainInner(depth + 1, currentTree.split(), currentTree.countLeafs())
+      trainInner(depth + 1, currentTree.split(), currentLeafs)
     }
   }
 }
