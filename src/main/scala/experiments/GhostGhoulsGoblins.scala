@@ -2,6 +2,8 @@ package experiments
 
 import instance.{Features, Instance}
 import tree.classifier.TreeClassifier
+import utils.Metrics
+import utils.Utils.trainTestSplit
 
 object GhostGhoulsGoblins {
 
@@ -20,21 +22,16 @@ object GhostGhoulsGoblins {
       }
       .toArray
 
-    val train = data.take(math.round(data.length * 0.7).toInt)
-    val eval = data.takeRight(math.round(data.length * 0.3).toInt)
+    val (train, eval) = trainTestSplit(data, 0.7, shuffle = false)
 
     val clf = new TreeClassifier(maxDepth = 3)
 
-    val model = clf.train(train)
+    val model = clf.train(train.toArray)
 
 
-    val predictions = for (instance <- eval) yield model.predict(instance.attributes)
+    val predictions = (for (instance <- eval) yield model.predict(instance.attributes)).toArray
 
-    val acc = eval.map(_.label)
-      .zip(predictions)
-      .count(x => x._1 == x._2)
-
-    println(acc.toDouble / predictions.length)
+    println(Metrics.accuracy(predictions, eval.map(_.label).toArray))
   }
 
 }
