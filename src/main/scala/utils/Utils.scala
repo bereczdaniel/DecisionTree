@@ -29,5 +29,15 @@ object Utils {
       instances.filterNot(_._1 >= boundary).groupBy(_._2).map(x => (x._1, x._2.length)))
   }
 
+  def trainTestSplit[T](data: Array[T], trainPercentage: Double, shuffle: Boolean = true): (List[T], List[T]) = {
+    val shuffled =
+      if(shuffle)
+        scala.util.Random.shuffle(data.toList)
+      else
+        data.toList
+
+    (shuffled.take(math.round(data.length * trainPercentage).toInt),
+      shuffled.takeRight(data.length - math.round(data.length * trainPercentage).toInt))
+  }
 
 }
