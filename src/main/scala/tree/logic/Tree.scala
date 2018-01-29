@@ -69,7 +69,7 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
         yield a(j)(i)).toArray.zip(leafInstances.map(_.getLabel)))
       .toArray
 
-    val boundaries = (for(i <- b.indices) yield (bestSplit(b(i)), i)).toArray.maxBy(_._1._2)
+    val boundaries = (for(i <- b.indices) yield (bestSplit(b(i)), i)).toArray.minBy(_._1._2)
 
     {f => f.getValues(boundaries._2) >= boundaries._1._1}
   }
