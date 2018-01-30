@@ -16,7 +16,13 @@ sealed abstract class Tree(left: Tree, right: Tree) {
 
   def countLeafs(): Int
 
+  def depth(): Int
+
   def impurity(): Double
+
+  def worstImpurity(): Double
+
+  def splitWorst(): Tree
 
   val state: mutable.HashMap[String, Int]
 }
@@ -57,6 +63,21 @@ case class Node(var left: Tree,
 
   override def impurity(): Double =
     Measures.gini(state)
+
+  //TODO replace with purity gain (once it's implemented)
+  override def splitWorst(): Tree = {
+    if(left.worstImpurity() > right.worstImpurity())
+      left = left.splitWorst()
+    else
+      right = right.splitWorst()
+    this
+  }
+
+  override def worstImpurity(): Double =
+    math.max(left.worstImpurity(), right.worstImpurity())
+
+  override def depth(): Int =
+    math.max(left.depth(), right.depth()) + 1
 }
 
 
@@ -109,4 +130,10 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
   override def countLeafs(): Int = 1
 
   override def impurity(): Double = gini()
+
+  override def splitWorst(): Tree = split()
+
+  override def worstImpurity(): Double = impurity()
+
+  override def depth(): Int = 0
 }
