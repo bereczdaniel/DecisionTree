@@ -71,7 +71,7 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
 
     val boundaries = (for(i <- b.indices) yield (bestSplit(b(i)), i)).toArray.minBy(_._1._2)
 
-    {f => f.getValues(boundaries._2) >= (boundaries._1._1 * 0.99)}
+    {f => f.getValues(boundaries._2) >= boundaries._1._1}
   }
 
   override def split(): Tree = {

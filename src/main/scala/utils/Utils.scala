@@ -19,6 +19,8 @@ object Utils {
         bestGini = comboGini
       }
     }
+
+    bestBoundary = (bestBoundary + instances.filterNot(_._1>= bestBoundary).maxBy(_._1)._1) / 2.0
     (bestBoundary, bestGini)
   }
 
