@@ -3,7 +3,7 @@ package utils
 
 object Utils {
 
-  def bestSplit[T: Ordering](instances: Array[(T, String)]): (T, Double) = {
+  def bestSplit(instances: Array[(Double, String)]): (Double, Double) = {
 
     var bestBoundary = instances.head._1
     var bestGini = 1.0

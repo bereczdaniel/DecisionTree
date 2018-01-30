@@ -2,8 +2,14 @@ package utils
 
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
+import scala.language.implicitConversions
+
+
 
 class BestSplitTest extends FlatSpec with PropertyChecks with Matchers{
+
+  implicit def int2Double(x: Array[(Int, String)]): Array[(Double, String)] =
+    x.map(y => (y._1.toDouble, y._2))
 
   "BS" should "give the perfect split" in {
     val instances = Array(
