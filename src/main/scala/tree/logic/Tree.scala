@@ -9,25 +9,36 @@ import scala.collection.mutable.ArrayBuffer
 
 sealed abstract class Tree(left: Tree, right: Tree) {
   def predict(instance: Features): String
+
   def insert(instance: Instance): Unit
+
   def split(): Tree
+
   def countLeafs(): Int
+
+  def impurity(): Double
+
+  val state: mutable.HashMap[String, Int]
 }
 
 case class Node(var left: Tree,
                 var right: Tree,
-                rule: Features => Boolean) extends Tree(left, right){
+                rule: Features => Boolean) extends Tree(left, right) {
+  val state = new mutable.HashMap[String, Int]()
+
   override def predict(instance: Features): String = {
-    if(rule(instance)){
+    if (rule(instance)) {
       left.predict(instance)
     }
-    else{
+    else {
       right.predict(instance)
     }
   }
 
   override def insert(instance: Instance): Unit = {
-    if(rule(instance.getFeatures)){
+    state.update(instance.getLabel, state.getOrElse(instance.getLabel, 0) + 1)
+
+    if (rule(instance.getFeatures)) {
       left.insert(instance)
     }
     else {
@@ -44,6 +55,8 @@ case class Node(var left: Tree,
   override def countLeafs(): Int =
     left.countLeafs() + right.countLeafs()
 
+  override def impurity(): Double =
+    Measures.gini(state)
 }
 
 
@@ -51,6 +64,7 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
 
   val leafInstances = new ArrayBuffer[Instance]()
   val state = new mutable.HashMap[String, Int]()
+
   def gini(): Double = Measures.gini(state)
 
   override def predict(instance: Features): String = {
@@ -64,25 +78,25 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
 
   def createRule(): Features => Boolean = {
     val a = leafInstances.map(_.getFeatures.getValues)
-    val b = (for(i <- a.head.indices)
-      yield (for(j <- a.indices)
+    val b = (for (i <- a.head.indices)
+      yield (for (j <- a.indices)
         yield a(j)(i)).toArray.zip(leafInstances.map(_.getLabel)))
       .toArray
 
-    val boundaries = (for(i <- b.indices) yield (bestSplit(b(i)), i)).toArray.minBy(_._1._2)
+    val boundaries = (for (i <- b.indices) yield (bestSplit(b(i)), i)).toArray.minBy(_._1._2)
 
-    {f => f.getValues(boundaries._2) >= boundaries._1._1}
+    { f => f.getValues(boundaries._2) >= boundaries._1._1 }
   }
 
   override def split(): Tree = {
 
-    if((maxImpurity < gini || maxLeafSize < leafInstances.size) && state.size > 1){
+    if ((maxImpurity < gini || maxLeafSize < leafInstances.size) && state.size > 1) {
       val newRule: Features => Boolean = createRule()
       val newNode = Node(
         Leaf(maxLeafSize, maxImpurity),
         Leaf(maxLeafSize, maxImpurity),
         newRule)
-      for(instance <- leafInstances){
+      for (instance <- leafInstances) {
         newNode.insert(instance)
       }
       newNode
@@ -93,4 +107,6 @@ case class Leaf(maxLeafSize: Int, maxImpurity: Double) extends Tree(null, null) 
   }
 
   override def countLeafs(): Int = 1
+
+  override def impurity(): Double = gini()
 }
