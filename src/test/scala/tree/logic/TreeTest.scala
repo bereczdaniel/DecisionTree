@@ -2,7 +2,8 @@ package tree.logic
 
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
-import test.utils.{Dummy, TestType}
+import test.utils.TestType
+import test.utils.Utils._
 
 class TreeTest extends FlatSpec with PropertyChecks with Matchers {
 
@@ -11,75 +12,42 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     val maxLeafSize = 10
     val maxImpurity = 0.0
 
+    val dataA = createTrainingPointsFromOneClass(2,10,"A")
+    val dataB = createTrainingPointsFromOneClass(4,10,"B")
+    val dataA2 = createTrainingPointsFromOneClass(4,10,"A")
+    val dataB2 = createTrainingPointsFromOneClass(4,10,"B")
 
-    val testTree = Node(
-      Node(
-        Leaf(maxLeafSize, maxImpurity),
-        Leaf(maxLeafSize, maxImpurity),
-        { _ => true }
-      ),
-      Node(
-        Leaf(maxLeafSize, maxImpurity),
-        Leaf(maxLeafSize, maxImpurity),
-        { _ => true }
-      ),
-      { _ => true }
-    )
 
-    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
-    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
-    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
-    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
-    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
+    Leaf(maxLeafSize, maxImpurity, dataA).predict(null) shouldBe "A"
+    Leaf(maxLeafSize, maxImpurity, dataA ++ dataB).predict(null) shouldBe "B"
+    Leaf(maxLeafSize, maxImpurity, dataA ++ dataB ++ dataA2).predict(null) shouldBe "A"
+    Leaf(maxLeafSize, maxImpurity,  dataA ++ dataB ++ dataA2 ++ dataB2).predict(null) shouldBe "B"
 
-    testTree.insert(dummyInstance1)
-    testTree.insert(dummyInstance2)
-    testTree.predict(Dummy(6, 2.25)) shouldBe "A"
 
-    testTree.insert(dummyInstance3)
-    testTree.predict(Dummy(6, 2.25)) shouldBe "A"
-
-    testTree.insert(dummyInstance4)
-    testTree.insert(dummyInstance5)
-
-    testTree.predict(Dummy(6, 2.25)) shouldBe "B"
   }
 
   "Split operation" should "work" in {
     val maxLeafSize = 3
     val maxImpurity = 0.0
 
-    val testTree = Leaf(maxLeafSize, maxImpurity)
+    val testTree = Leaf(maxLeafSize, maxImpurity, createTrainingPointsFromOneClass(2,10,"A"))
 
-    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
-    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
-    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
-    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
-    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
-
-    testTree.insert(dummyInstance1)
-    testTree.insert(dummyInstance2)
 
     val splitTree1 = testTree.split()
-    splitTree1.isInstanceOf[Leaf] shouldBe true
+    splitTree1.isInstanceOf[Leaf[TestType]] shouldBe true
 
-    testTree.insert(dummyInstance3)
-    testTree.insert(dummyInstance4)
-    testTree.insert(dummyInstance5)
 
-    val splitTree2 = testTree.split()
+    val testTree2 = Leaf(maxLeafSize, maxImpurity, createTrainingPointsFromMultipleClass(Array((4, 10, "A"), (4, 20, "B"))))
+
+    val splitTree2 = testTree2.split()
     splitTree2.isInstanceOf[Node] shouldBe true
 
-    val impurityTree = Leaf(10, 0.001)
-
-    impurityTree.insert(dummyInstance1)
-    impurityTree.insert(dummyInstance2)
+    var impurityTree = Leaf(10, 0.001, createTrainingPointsFromOneClass(4, 20, "A"))
 
     val impurityTreeSplit = impurityTree.split()
-    impurityTreeSplit.isInstanceOf[Leaf] shouldBe true
+    impurityTreeSplit.isInstanceOf[Leaf[TestType]] shouldBe true
 
-    impurityTree.insert(dummyInstance3)
-    impurityTree.insert(dummyInstance4)
+    impurityTree = Leaf(maxLeafSize, maxImpurity, createTrainingPointsFromMultipleClass(Array((4, 10, "A"), (4, 20, "B"))))
 
     val impurityTreeSplit2 = impurityTree.split()
     impurityTreeSplit2.isInstanceOf[Node] shouldBe true
@@ -88,22 +56,6 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
   "New rules" should "be created" in {
     val maxLeafSize = 3
     val maxImpurity = 0.0
-
-    val testTree = Leaf(maxLeafSize, maxImpurity)
-
-    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
-    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
-    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
-    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
-    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
-    val dummyInstance6 = new TestType(Dummy(2, 1.25), "A")
-
-    testTree.insert(dummyInstance1)
-    testTree.insert(dummyInstance2)
-    testTree.insert(dummyInstance3)
-    testTree.insert(dummyInstance4)
-    testTree.insert(dummyInstance5)
-    testTree.insert(dummyInstance6)
     //TODO figure out how to test
   }
 
@@ -111,21 +63,7 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     val maxLeafSize = 3
     val maxImpurity = 0.0
 
-    val testTree = Leaf(maxLeafSize, maxImpurity)
-
-    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
-    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
-    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
-    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
-    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
-    val dummyInstance6 = new TestType(Dummy(2, 1.25), "A")
-
-    testTree.insert(dummyInstance1)
-    testTree.insert(dummyInstance2)
-    testTree.insert(dummyInstance3)
-    testTree.insert(dummyInstance4)
-    testTree.insert(dummyInstance5)
-    testTree.insert(dummyInstance6)
+    val testTree = Leaf(maxLeafSize, maxImpurity, createTrainingPointsFromMultipleClass(Array((3, 10, "A"), (3, 20, "B"))))
 
     testTree.countLeafs() shouldBe 1
 
@@ -142,54 +80,18 @@ class TreeTest extends FlatSpec with PropertyChecks with Matchers {
     val maxLeafSize = 3
     val maxImpurity = 0.0
 
-    val testTree = Leaf(maxLeafSize, maxImpurity)
+    val testTree = Leaf(maxLeafSize, maxImpurity, createTrainingPointsFromMultipleClass(Array((3, 10, "A"), (3, 40, "B"))))
 
-    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
-    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
-    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
-    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
-    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
-    val dummyInstance6 = new TestType(Dummy(2, 1.25), "A")
-
-    testTree.insert(dummyInstance1)
-    testTree.insert(dummyInstance2)
-    testTree.insert(dummyInstance3)
-    testTree.insert(dummyInstance4)
-    testTree.insert(dummyInstance5)
-    testTree.insert(dummyInstance6)
-
-    testTree.gini shouldBe 0.5
+    testTree.impurity shouldBe 0.5
 
     val splitTree = testTree.split()
 
-    splitTree.asInstanceOf[Node].right.asInstanceOf[Leaf].gini shouldBe 0.0
-    splitTree.asInstanceOf[Node].left.asInstanceOf[Leaf].gini shouldBe 0.0
+    splitTree.asInstanceOf[Node].right.asInstanceOf[Leaf[TestType]].impurity shouldBe 0.0
+    splitTree.asInstanceOf[Node].left.asInstanceOf[Leaf[TestType]].impurity shouldBe 0.0
   }
 
   //TODO additional test, to check for the best split
   "Worst split" should "split only the leaf with the worst impurity" in {
-    val maxLeafSize = 1
-    val maxImpurity = 0.0
 
-    val testTree = Leaf(maxLeafSize, maxImpurity)
-
-    val dummyInstance1 = new TestType(Dummy(1, 1.0), "A")
-    val dummyInstance2 = new TestType(Dummy(2, 1.25), "A")
-    val dummyInstance3 = new TestType(Dummy(3, 1.5), "B")
-    val dummyInstance4 = new TestType(Dummy(4, 1.75), "B")
-    val dummyInstance5 = new TestType(Dummy(5, 2.0), "B")
-    val dummyInstance6 = new TestType(Dummy(6, 2.25), "A")
-
-    testTree.insert(dummyInstance1)
-    testTree.insert(dummyInstance2)
-    testTree.insert(dummyInstance3)
-    testTree.insert(dummyInstance4)
-    testTree.insert(dummyInstance5)
-    testTree.insert(dummyInstance6)
-
-    val base = testTree.split()
-    val better = testTree.split().splitWorst()
-
-    better.countLeafs() shouldBe  base.countLeafs() + 1
   }
 }

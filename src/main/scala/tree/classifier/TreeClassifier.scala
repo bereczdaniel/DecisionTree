@@ -6,14 +6,10 @@ import tree.logic.{Leaf, Tree}
 class TreeClassifier(maxLeafSize: Int = 1, maxImpurity: Double = 0.0, maxDepth: Int = Int.MaxValue, maxLeafNumber: Int = Int.MaxValue) {
 
   def train[A <: Instance](data: Array[A]): Tree = {
-    val base = Leaf(maxLeafSize, maxImpurity)
-
-    for (instance <- data) {
-      base.insert(instance)
-    }
+    val base = Leaf(maxLeafSize, maxImpurity, data)
 
     if (math.pow(maxDepth, 2) > maxLeafNumber)
-      trainOneByOne(base)
+      trainOneByOne(base, 0)
     else
       trainInner(1, base, 0)
   }
@@ -28,10 +24,12 @@ class TreeClassifier(maxLeafSize: Int = 1, maxImpurity: Double = 0.0, maxDepth: 
   }
 
   //TODO force maxDepth restriction
-  def trainOneByOne(currentTree: Tree): Tree = {
-    if (currentTree.countLeafs() == maxLeafNumber)
+  def trainOneByOne(currentTree: Tree, prevLeafNumber: Int): Tree = {
+    val currentLeafs = currentTree.countLeafs()
+
+    if (currentTree.countLeafs() == maxLeafNumber || prevLeafNumber == currentLeafs)
       currentTree
     else
-      trainOneByOne(currentTree.splitWorst())
+      trainOneByOne(currentTree.splitWorst(), currentLeafs)
   }
 }
