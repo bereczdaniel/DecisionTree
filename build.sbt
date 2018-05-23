@@ -2,7 +2,7 @@ name := "DecisionTree"
 
 version := "0.1"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.7"
 
 lazy val commonDependencies = Seq(
   "org.scalatest" % "scalatest_2.11" % "3.0.1" % "test",
@@ -26,6 +26,5 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "hu.sztaki.ilab",
   version := "0.1.0",
-  scalaVersion := "2.11.8"
+  scalaVersion := "2.11.7"
 )
-        
