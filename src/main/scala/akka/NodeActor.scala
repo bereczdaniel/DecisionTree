@@ -4,6 +4,11 @@ import akka.NodeActor._
 import akka.actor.{ActorRef, FSM, Props}
 import instance.Features
 
+
+/**
+  * Skeleton for Akka based decision tree
+  * @param instances: Data
+  */
 class NodeActor(instances: Instances) extends FSM[State, Data] {
 
   startWith(Leaf, instances)
@@ -11,7 +16,6 @@ class NodeActor(instances: Instances) extends FSM[State, Data] {
 
   when(Leaf) {
     case Event(msg: Predict, data: Instances) =>
-      msg.f
       stay()
     case Event(msg: Split, data: Instances) =>
       val left = context.actorOf(NodeActor.props(data))

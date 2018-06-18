@@ -5,6 +5,10 @@ import tree.classifier.TreeClassifier
 import utils.Metrics
 import utils.Utils.trainTestSplit
 
+
+/**
+  * Experiment for the Kaggle competition: https://www.kaggle.com/c/ghouls-goblins-and-ghosts-boo
+  */
 object GhostGhoulsGoblins {
 
   case class Data(boneLength: Double, rottingFlesh: Double, hairLength: Double, hasSoul: Double) extends Features {

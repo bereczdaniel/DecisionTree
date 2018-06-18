@@ -106,7 +106,7 @@ case class Leaf[T <: Instance](maxLeafSize: Int, maxImpurity: Double,
   override def depth(): Int = 0
 
   override def bestImpurityReduction(): Double = {
-    if(state.size > 1){
+    if(maxLeafSize < leafInstances.length && state.size > 1){
       val potentialLeft = leafInstances.filter(x => potentialRule(x.getFeatures)).map(_.getLabel).groupBy(x => x).map(x => (x._1, x._2.length))
       val potentialRight = leafInstances.filterNot(x => potentialRule(x.getFeatures)).map(_.getLabel).groupBy(x => x).map(x => (x._1, x._2.length))
 
